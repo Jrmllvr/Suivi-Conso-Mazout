@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#111827">
+  <title>Suivi consommation</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <h1>Suivi consommation</h1>
+        <p class="subtitle">Suivi des niveaux et de la consommation</p>
+      </div>
+      <button id="addTopBtn" class="icon-btn" aria-label="Ajouter une mesure">+</button>
+    </header>
+
+    <section class="summary-grid">
+      <div class="summary-card">
+        <span class="summary-label">Dernière valeur</span>
+        <strong id="latestLitres">0 L</strong>
+        <span id="latestCm" class="summary-detail">0 cm</span>
+      </div>
+    </section>
+
+    <section class="annual-section">
+      <h2>Totaux par année</h2>
+      <div id="annualSummary" class="annual-list">
+        <div class="empty-state">Aucune donnée</div>
+      </div>
+    </section>
+
+    <div class="actions">
+      <button id="addBtn" class="primary-btn">+ Ajouter une mesure</button>
+      <div class="file-actions">
+        <button id="exportBtn" class="secondary-btn">Exporter Excel</button>
+        <label class="secondary-btn file-label" for="importInput">Importer Excel</label>
+        <input id="importInput" type="file" accept=".xlsx,.xls" hidden>
+      </div>
+    </div>
+
+    <section class="table-section">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Valeur</th>
+              <th>Consommation</th>
+              <th class="actions-col"></th>
+            </tr>
+          </thead>
+          <tbody id="entriesBody"></tbody>
+        </table>
+      </div>
+      <div id="tableEmpty" class="empty-state">Aucune mesure enregistrée.</div>
+    </section>
+
+    <footer>
+      <span>Suivi consommation</span>
+      <span>1 cm = 16 L</span>
+    </footer>
+  </main>
+
+  <button id="scrollTopBtn" class="scroll-top" aria-label="Retour en haut">↑</button>
+
+  <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modalTitle">Ajouter une mesure</h2>
+        <button id="closeModalBtn" class="close-btn" aria-label="Fermer">×</button>
+      </div>
+      <form id="entryForm">
+        <label>
+          Date
+          <input id="dateInput" type="date" required>
+        </label>
+        <label>
+          Valeur en cm
+          <input id="cmInput" type="number" step="0.01" min="0" inputmode="decimal" required>
+        </label>
+        <div class="modal-actions">
+          <button type="button" id="cancelBtn" class="secondary-btn">Annuler</button>
+          <button type="submit" class="primary-btn">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
