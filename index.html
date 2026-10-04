@@ -1,75 +1,63 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Suivi consommation</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="topbar">
-  <h1>Suivi consommation</h1>
-  <button id="addBtn" class="primary">＋ Ajouter</button>
-</header>
+<main class="app">
+  <section class="top-grid">
+    <div class="left-column">
+      <section class="panel tank-panel">
+        <div class="panel-title">SOLDE CITERNE</div>
+        <div id="tankBalance" class="tank-balance">0 L</div>
+      </section>
+      <button id="addEntryBtn" class="add-btn">+ Ajouter un relevé</button>
+    </div>
 
-<main class="container">
-  <section class="card settings">
-    <div>
-      <h2>Paramètre de conversion</h2>
-      <p>Modifiez à tout moment le nombre de litres correspondant à 1 cm.</p>
-    </div>
-    <div class="conversion-control">
-      <label for="conversionInput">1 cm =</label>
-      <input id="conversionInput" type="number" min="0.01" step="0.01" value="16">
-      <span>L</span>
-      <button id="saveConversionBtn" class="secondary">Enregistrer</button>
-    </div>
+    <section class="panel annual-panel">
+      <div class="panel-title">CONSOMMATION PAR ANNÉE</div>
+      <div id="annualTotals" class="annual-list"></div>
+      <div id="annualEmpty" class="muted">Aucun relevé</div>
+    </section>
   </section>
 
-  <section class="summary-grid">
-    <div class="summary-card"><span>Total consommé</span><strong id="grandTotal">0 L</strong></div>
-    <div class="summary-card"><span>Nombre de relevés</span><strong id="entryCount">0</strong></div>
-    <div class="summary-card"><span>Conversion actuelle</span><strong id="conversionDisplay">1 cm = 16 L</strong></div>
-  </section>
-
-  <section id="formCard" class="card hidden">
-    <h2 id="formTitle">Ajouter un relevé</h2>
-    <input type="hidden" id="editId">
-    <div class="form-grid">
-      <label>Date<input id="dateInput" type="date"></label>
-      <label>Relevé en cm<input id="cmInput" type="number" min="0" step="0.01"></label>
-    </div>
-    <div class="form-actions">
-      <button id="saveEntryBtn" class="primary">Enregistrer</button>
-      <button id="cancelBtn" class="secondary">Annuler</button>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="section-header">
-      <h2>Relevés</h2>
-      <div class="file-actions">
-        <button id="importBtn" class="secondary">Importer Excel</button>
-        <button id="exportBtn" class="secondary">Exporter Excel</button>
-        <input id="fileInput" type="file" accept=".xlsx,.xls" hidden>
-      </div>
-    </div>
+  <section class="panel entries-panel">
+    <div class="panel-title entries-title">RELEVÉS</div>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Date</th><th>cm</th><th>Litres</th><th>Actions</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Relevé (cm)</th>
+            <th>Consommation</th>
+            <th></th>
+          </tr>
+        </thead>
         <tbody id="entriesBody"></tbody>
       </table>
     </div>
-    <p id="emptyMessage" class="empty">Aucun relevé enregistré.</p>
+    <div id="entriesEmpty" class="muted empty-state">Aucun relevé enregistré.</div>
   </section>
 
-  <section class="card">
-    <h2>Totaux annuels</h2>
-    <div id="yearlyTotals" class="yearly-list"></div>
+  <section class="file-actions">
+    <button id="importBtn" class="small-btn">Importer Excel</button>
+    <button id="exportBtn" class="small-btn">Exporter Excel</button>
+    <input id="fileInput" type="file" accept=".xlsx,.xls" hidden>
+  </section>
+
+  <section class="conversion">
+    <label for="conversionInput">Conversion</label>
+    <span>1 cm =</span>
+    <input id="conversionInput" type="number" min="0.01" step="0.01">
+    <span>L</span>
+    <button id="saveConversion" class="tiny-btn">Modifier</button>
   </section>
 </main>
 
-<button id="scrollTopBtn" class="scroll-top" aria-label="Remonter en haut">↑</button>
+<button id="scrollTop" class="scroll-top" aria-label="Remonter en haut">↑</button>
 
 <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
 <script src="app.js"></script>
