@@ -20,6 +20,10 @@ function loadConversion(){
 }
 function saveConversion(){localStorage.setItem(CONVERSION_KEY,String(conversion))}
 function litres(cm){return Number(cm)*conversion}
+function consumptionFor(sorted,index){
+  if(index===0)return 0;
+  return (Number(sorted[index-1].cm)-Number(sorted[index].cm))*conversion;
+}
 function fmt(value){return Number(value).toLocaleString("fr-BE",{maximumFractionDigits:2})}
 function dateLabel(value){
   if(!value)return "";
@@ -36,9 +40,10 @@ function render(){
   $("tankBalance").textContent=latest ? `${fmt(litres(latest.cm))} L` : "0 L";
 
   const years={};
-  sorted.forEach(entry=>{
+  sorted.forEach((entry,index)=>{
     const year=entry.date.slice(0,4);
-    years[year]=(years[year]||0)+litres(entry.cm);
+    const consumption=consumptionFor(sorted,index);
+    years[year]=(years[year]||0)+consumption;
   });
   const yearKeys=Object.keys(years).sort((a,b)=>b.localeCompare(a));
   $("annualTotals").innerHTML=yearKeys.map(year=>`
@@ -48,14 +53,14 @@ function render(){
     </div>`).join("");
   $("annualEmpty").style.display=yearKeys.length?"none":"block";
 
-  $("entriesBody").innerHTML=sorted.map(entry=>`
+  $("entriesBody").innerHTML=sorted.map((entry,index)=>`
     <tr>
       <td>${dateLabel(entry.date)}</td>
       <td>${fmt(entry.cm)}</td>
-      <td>${fmt(litres(entry.cm))} L</td>
+      <td>${fmt(consumptionFor(sorted,index))} L</td>
       <td>
-        <button class="action" data-action="edit" data-id="${entry.id}">Modifier</button>
-        <button class="action" data-action="delete" data-id="${entry.id}">Supprimer</button>
+        <button class="action icon-action" data-action="edit" data-id="${entry.id}" aria-label="Modifier" title="Modifier">✎</button>
+        <button class="action icon-action" data-action="delete" data-id="${entry.id}" aria-label="Supprimer" title="Supprimer">×</button>
       </td>
     </tr>`).join("");
   $("entriesEmpty").style.display=sorted.length?"none":"block";
@@ -111,7 +116,8 @@ $("conversionInput").onkeydown=e=>{
 
 $("exportBtn").onclick=()=>{
   if(typeof XLSX==="undefined"){alert("Le module Excel n'est pas disponible.");return}
-  const rows=entries.map(e=>({Date:e.date,"Relevé (cm)":e.cm,"Litres":litres(e.cm)}));
+  const sorted=[...entries].sort((a,b)=>a.date.localeCompare(b.date));
+  const rows=sorted.map((e,index)=>({Date:e.date,"Relevé":e.cm,"Consommation":consumptionFor(sorted,index)}));
   const ws=XLSX.utils.json_to_sheet(rows);
   const wb=XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb,ws,"Relevés");
@@ -132,7 +138,7 @@ $("fileInput").onchange=e=>{
       const rows=XLSX.utils.sheet_to_json(ws,{defval:""});
       const imported=rows.map((row,i)=>{
         let date=row.Date||row.date||"";
-        let cm=row["Relevé (cm)"]??row.cm??row.Cm??row.CM;
+        let cm=row["Relevé"]??row["Relevé (cm)"]??row.cm??row.Cm??row.CM;
         if(typeof date==="number"){
           const p=XLSX.SSF.parse_date_code(date);
           date=p?`${p.y}-${String(p.m).padStart(2,"0")}-${String(p.d).padStart(2,"0")}`:"";

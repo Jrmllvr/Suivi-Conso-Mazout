@@ -25,7 +25,9 @@ th{font-size:12px;letter-spacing:.04em;color:#777;font-weight:600;text-align:lef
 td{padding:12px 10px;border-top:1px solid #ecece8;font-size:15px}
 td:last-child{text-align:right;white-space:nowrap}
 .action{border:0;background:none;color:#555;cursor:pointer;margin-left:8px;padding:4px;font-size:13px}
-.action:hover{text-decoration:underline}
+.action:hover{background:#ecece8}
+.icon-action{width:28px;height:28px;border-radius:6px;margin-left:3px;font-size:17px;line-height:20px;color:#555;text-decoration:none}
+.icon-action[data-action="delete"]{font-size:21px;font-weight:300}
 .empty-state{text-align:center;padding:20px 0}
 .file-actions{display:flex;gap:8px;margin:12px 0 0}
 .small-btn,.tiny-btn{border:1px solid #d2d2ce;background:transparent;color:#555;border-radius:7px;padding:8px 11px;font-size:12px;cursor:pointer}
