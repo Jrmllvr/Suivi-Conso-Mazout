@@ -1,25 +1,13 @@
-# Suivi consommation
+# suivi-consommation-app
 
-Application web autonome de suivi d'un niveau exprimé en cm.
+Version mise à jour de l'application de suivi.
 
-## Règles de calcul
+## Modifications
+- Ajout d'un bouton flottant `↑` pour remonter en haut de page.
+- Ajout d'un paramètre de conversion modifiable : `1 cm = XX L`.
+- La valeur de conversion est mémorisée dans le navigateur.
+- Lorsque la conversion est modifiée, tous les litres calculés, le total général et les totaux annuels sont recalculés immédiatement.
+- Import et export Excel conservés.
 
-- 1 cm = 16 L.
-- La première mesure affiche 0 L/j.
-- Pour chaque mesure suivante :
-  - litres consommés = (valeur précédente - valeur actuelle) × 16
-  - consommation moyenne = litres consommés / nombre de jours écoulés.
-- La valeur affichée en haut correspond à la dernière mesure × 16.
-- Les totaux annuels additionnent les litres consommés de chaque période dont la date de mesure finale appartient à l'année concernée.
-
-## Fichiers
-
-- `index.html`
-- `style.css`
-- `app.js`
-
-## Données
-
-Les mesures sont sauvegardées dans le `localStorage` du navigateur.
-
-L'import/export Excel utilise SheetJS depuis jsDelivr. Une connexion internet est donc nécessaire pour les fonctions Excel lorsque la bibliothèque n'est pas déjà en cache.
+## Installation
+Remplacer les fichiers de l'application actuelle par ceux contenus dans cette archive, puis publier le dépôt avec GitHub Pages comme précédemment.
