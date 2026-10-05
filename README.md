@@ -1,12 +1,14 @@
-# Suivi consommation — version épurée
+# suivi-consommation-app
 
-Structure :
-1. Solde citerne en haut à gauche.
-2. Consommations par année en haut à droite.
-3. Bouton « + Ajouter un relevé » sous le tableau de gauche, aligné avec le bas du tableau annuel.
-4. Liste complète des relevés.
-5. Import / export Excel.
-6. Paramètre de conversion discret en bas de page.
-7. Bouton flottant pour remonter en haut.
+Version avec suivi des relevés de cuve et des livraisons.
 
-La conversion `1 cm = XX L` est stockée localement. Toute modification recalcule immédiatement le solde, les consommations annuelles et les litres de chaque relevé affiché.
+## Fonctionnement
+- Le solde de la citerne est toujours calculé à partir du dernier relevé en cm, converti avec le facteur défini (par défaut 16 L/cm).
+- Un relevé normal calcule la consommation entre le relevé précédent et celui-ci :
+  `(relevé précédent - relevé actuel) × conversion ÷ nombre de jours`.
+- La première mesure affiche `0 L/j`.
+- Une livraison comporte une date, une hauteur en cm après livraison et la quantité livrée en litres. Elle apparaît simplement comme `Livraison` dans la colonne Consommation.
+- La livraison devient le nouveau point de départ pour la consommation du relevé suivant.
+- Les totaux annuels additionnent les litres réellement consommés, pas les livraisons.
+- La conversion reste modifiable en bas de page et recalcule automatiquement les consommations et totaux.
+- Import/export Excel sont conservés. L'export contient les informations nécessaires pour restaurer les livraisons.
