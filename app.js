@@ -67,15 +67,21 @@ function calculatedRows(){
   });
 }
 
+function heatingSeason(date){
+  const [year,month]=date.split('-').map(Number);
+  if(month>=10) return `${year}-${year+1}`;
+  if(month<=4) return `${year-1}-${year}`;
+  // Aucun relevé n'est prévu de mai à septembre ; garde-fou si une entrée est ajoutée.
+  return null;
+}
+
 function render(){
   const rows=calculatedRows();
   const latest=rows[rows.length-1];
   $("tankBalance").textContent=latest ? `${fmt(litresFromCm(latest.cm))} L` : "0 L";
 
-  // Moyenne globale pondérée : total des litres consommés / total des jours
-  // réellement couverts par les périodes de calcul. Une livraison coupe la
-  // période précédente, mais la période entre la livraison et le relevé suivant
-  // reste bien prise en compte.
+  // Moyenne globale pondérée sur toutes les périodes valides de l'historique :
+  // somme des litres consommés / somme des jours couverts par ces consommations.
   let totalConsumed=0;
   let totalDays=0;
   let previous=null;
@@ -91,19 +97,28 @@ function render(){
     previous=row;
   });
   const averageDaily=totalDays>0 ? totalConsumed/totalDays : 0;
-  $("averageDaily").textContent=`Moyenne : ${fmt(averageDaily)} L/j`;
+  $("averageDaily").textContent=`Moyenne globale : ${fmt(averageDaily)} L/j`;
 
-  // Totaux annuels : litres réellement consommés, affectés à la date du relevé.
-  const years={};
+  // Total consommé par saison de chauffe : du 1er octobre au 30 avril suivant.
+  // Chaque consommation est affectée à la saison du relevé qui clôt l'intervalle.
+  const seasons={};
+  let previousForSeason=null;
   rows.forEach(row=>{
-    if(row.type!=="reading" || row.consumedLitres==null)return;
-    const year=row.date.slice(0,4);
-    years[year]=(years[year]||0)+row.consumedLitres;
+    if(row.type==="reading" && row.consumedLitres!=null && previousForSeason){
+      const season=heatingSeason(row.date);
+      // Ne pas attribuer à une saison l'intervalle avril-octobre qui traverse
+      // la période sans relevés / hors chauffe.
+      if(season && heatingSeason(previousForSeason.date)===season){
+        seasons[season]=(seasons[season]||0)+row.consumedLitres;
+      }
+    }
+    previousForSeason=row;
   });
-  const yearKeys=Object.keys(years).sort((a,b)=>b.localeCompare(a));
-  $("annualTotals").innerHTML=yearKeys.map(year=>`
-    <div class="annual-row"><span>${year}</span><strong>${fmt(years[year])} L</strong></div>`).join("");
-  $("annualEmpty").style.display=yearKeys.length?"none":"block";
+  const seasonKeys=Object.keys(seasons).sort((a,b)=>b.localeCompare(a));
+  $("annualTotals").innerHTML=seasonKeys.map(season=>
+    `<div class="annual-row"><span>${season.replace('-', '–')}</span><strong>${fmt(seasons[season])} L</strong></div>`
+  ).join("");
+  $("annualEmpty").style.display=seasonKeys.length?"none":"block";
 
   $("entriesBody").innerHTML=rows.map(entry=>{
     const consumption=entry.type==="delivery"?"Livraison":(entry.daily==null?"0 L/j":`${fmt(entry.daily)} L/j`);
